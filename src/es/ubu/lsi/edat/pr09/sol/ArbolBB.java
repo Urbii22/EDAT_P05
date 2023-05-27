@@ -3,19 +3,43 @@ import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-
+/**
+ * Clase que implementa un arbol binario de busqueda
+ * @author Diego Urbaneja, Victor De Marco
+ */
 public class ArbolBB<E> extends AbstractSet<E> {
-    private Nodo raiz;
+    /**
+     * nodo raiz del arbol
+     */
+    public Nodo raiz;
+
+    /**
+     * comparador
+     */
     private Comparator<? super E> comparator;
+
+    /**
+     * Constructor por defecto
+     */
     public ArbolBB() {
-        this((Comparator<? super E>) null);
+        this.raiz = null;
+        this.comparator = null;
     }
 
+    /**
+     * Constructor con comparador
+     * @param comparator comparador que recibe como argumento
+     */
     public ArbolBB(Comparator<? super E> comparator) {
         this.raiz = null;
         this.comparator = comparator;
     }
 
+    /**
+     * Constructor con coleccion y comparador
+     * @param collection colecion de elemntos a añadir al arbol
+     * @param comparator comparador que recibe como argumento
+     */
     public ArbolBB( Collection<? extends E> collection,Comparator<? super E> comparator) {
         this.comparator = comparator;
         if (collection != null) {
@@ -23,15 +47,27 @@ public class ArbolBB<E> extends AbstractSet<E> {
         }
     }
 
+    /**
+     * Constructor con coleccion
+     * @param collection coleccion de elementos a añadir al arbol
+     */
     public ArbolBB(Collection<? extends E> collection) {
         if (collection != null) {
             addAll(collection);
         }
+        this.comparator = null;
     }
 
-
+    /**
+     * Método add sobreescrito
+     * @param elemento elemnto a añdir
+     * @return true si se ha añadido correctamente
+     */
     @Override
     public boolean add(E elemento) {
+        if (elemento == null) {
+            throw new IllegalArgumentException("El elemento no puede ser nulo");
+        }
         if (raiz == null) {
             raiz = new Nodo(elemento);
             return true;
@@ -40,20 +76,30 @@ public class ArbolBB<E> extends AbstractSet<E> {
         }
     }
 
+    /**
+     * Metodo para comprobar si el arbol contiene un elemento
+     * @param objeto elemento a comprobar
+     * @return true si el arbol contiene el elemento
+     */
     @Override
     public boolean contains(Object objeto) {
         if (raiz == null || objeto == null) {
-            return false;
+            throw new IllegalArgumentException("El elemento no puede ser nulo");
         }
         @SuppressWarnings("unchecked")
         E elemento = (E) objeto;
         return raiz.buscar(elemento, comparator);
     }
 
+    /**
+     * Metodo para eliminar un elemento del arbol
+     * @param objeto elemento a eliminar
+     * @return true si se ha eliminado correctamente
+     */
     @Override
     public boolean remove(Object objeto) {
         if (raiz == null || objeto == null) {
-            return false;
+            throw new IllegalArgumentException("El elemento no puede ser nulo");
         }
         @SuppressWarnings("unchecked")
         E elemento = (E) objeto;
@@ -64,21 +110,40 @@ public class ArbolBB<E> extends AbstractSet<E> {
         return false;
     }
 
-
+    /**
+     * Metodo para obtener el tamaño del arbol
+     * @return tamaño del arbol
+     */
     @Override
     public int size() {
-        return raiz != null ? raiz.size() : 0;
+        if(raiz == null){
+            return 0;
+        } else {
+            return raiz.size();
+        }
     }
 
+    /**
+     * Metodo para vaciar el arbol
+     */
     public void clear() {
         raiz = null;
     }
 
+    /**
+     * Metodo para obtener un iterador del arbol
+     * @return iterador del arbol
+     */
     @Override
     public Iterator<E> iterator() {
         return new ArbolIterator();
     }
 
+    /**
+     * Metodo para obtener la altura del arbol (distancia desde el elemento a su hoja más lejana)
+     * @param elemento elemento del que se quiere obtener la altura
+     * @return altura del elemento
+     */
     public int altura(E elemento) {
         if (raiz == null) {
             return -1;
@@ -86,6 +151,12 @@ public class ArbolBB<E> extends AbstractSet<E> {
         return raiz.altura(elemento, comparator);
     }
 
+
+    /**
+     * Metodo para obtener la profundidad del arbol (distancia desde el elemento a la raiz)
+     * @param elemento elemento del que se quiere obtener la profundidad
+     * @return profundidad del elemento
+     */
     public int profundidad(E elemento) {
         if (raiz == null) {
             return -1;
@@ -93,17 +164,40 @@ public class ArbolBB<E> extends AbstractSet<E> {
         return raiz.profundidad(elemento, comparator, 0);
     }
 
-    private class Nodo {
-        private E dato;
-        private Nodo izquierdo;
-        private Nodo derecho;
+    /**
+     * Clase interna Nodo para representar los nodos del arbol
+     */
+    public class Nodo {
+        /**
+         * Dato del nodo
+         */
+        public E dato;
+        /**
+         * Hijo izq del nodo
+         */
+        public Nodo izquierdo;
 
+        /**
+         * Hijo der del nodo
+         */
+        public Nodo derecho;
+
+        /**
+         * Constructor por defecto
+         * @param dato dato del nodo
+         */
         public Nodo(E dato) {
             this.dato = dato;
             this.izquierdo = null;
             this.derecho = null;
         }
 
+        /**
+         * Metodo para insertar un elemento en el arbol
+         * @param elemento elemento a insertar
+         * @param comparator comparador que recibe como argumento
+         * @return true si se ha insertado correctamente
+         */
         public boolean insertar(E elemento, Comparator<? super E> comparator) {
             if (comparator == null) {
                 @SuppressWarnings("unchecked")
@@ -146,6 +240,12 @@ public class ArbolBB<E> extends AbstractSet<E> {
             }
         }
 
+        /**
+         * Método para buscar un elemento en el arbol
+         * @param elemento elemento a buscar
+         * @param comparator comparador que recibe como argumento
+         * @return true si el elemento se encuentra en el arbol
+         */
         public boolean buscar(E elemento, Comparator<? super E> comparator) {
             if (comparator == null) {
                 @SuppressWarnings("unchecked")
@@ -168,6 +268,12 @@ public class ArbolBB<E> extends AbstractSet<E> {
             }
         }
 
+        /**
+         * Metodo para eliminar un elemento del arbol
+         * @param elemento elemento a eliminar
+         * @param comparator comparador que recibe como argumento
+         * @return nodo eliminado
+         */
         public Nodo eliminar(E elemento, Comparator<? super E> comparator) {
             if (comparator == null) {
                 @SuppressWarnings("unchecked")
@@ -217,6 +323,10 @@ public class ArbolBB<E> extends AbstractSet<E> {
             return this;
         }
 
+        /**
+         * Metodo para obtener el valor minimo del subarbol del nodo
+         * @return valor minimo del subarbol derecho del nodo
+         */
         public E minValue() {
             if (izquierdo != null) {
                 return izquierdo.minValue();
@@ -224,6 +334,10 @@ public class ArbolBB<E> extends AbstractSet<E> {
             return dato;
         }
 
+        /**
+         * Metodo para obtener el tamaño del arbol
+         * @return tamaño del arbol
+         */
         public int size() {
             int size = 1;
             if (izquierdo != null) {
@@ -235,6 +349,12 @@ public class ArbolBB<E> extends AbstractSet<E> {
             return size;
         }
 
+        /**
+         * Metodo para obtener la altura del arbol
+         * @param elemento elemento a buscar
+         * @param comparator comparador que recibe como argumento
+         * @return altura del arbol
+         */
         public int altura(E elemento, Comparator<? super E> comparator) {
             if (comparator == null) {
                 @SuppressWarnings("unchecked")
@@ -257,12 +377,23 @@ public class ArbolBB<E> extends AbstractSet<E> {
             }
         }
 
+        /**
+         * Metodo para obtener la altura del arbol
+         * @return altura del arbol
+         */
         public int altura() {
             int alturaIzquierdo = izquierdo != null ? izquierdo.altura() : -1;
             int alturaDerecho = derecho != null ? derecho.altura() : -1;
             return Math.max(alturaIzquierdo, alturaDerecho) + 1;
         }
 
+        /**
+         * Metodo para obtener la profundidad de un elemento
+         * @param elemento elemento a buscar
+         * @param comparator comparador que recibe como argumento
+         * @param profundidadActual profundidad actual del arbol
+         * @return profundidad del elemento
+         */
         public int profundidad(E elemento, Comparator<? super E> comparator, int profundidadActual) {
             if (comparator == null) {
                 @SuppressWarnings("unchecked")
@@ -286,13 +417,27 @@ public class ArbolBB<E> extends AbstractSet<E> {
         }
     }
 
+    /**
+     * Clase para iterar el arbol
+     */
     private class ArbolIterator implements Iterator<E> {
+        /**
+         * Nodo siguiente
+         */
         private Nodo siguiente;
 
+        /**
+         * Constructor del iterador
+         */
         public ArbolIterator() {
             siguiente = findMin(raiz);
         }
 
+        /**
+         * Metodo para encontrar el valor minimo del arbol
+         * @param nodo nodo a buscar
+         * @return nodo con el valor minimo
+         */
         private Nodo findMin(Nodo nodo) {
             if (nodo != null) {
                 while (nodo.izquierdo != null) {
@@ -302,11 +447,19 @@ public class ArbolBB<E> extends AbstractSet<E> {
             return nodo;
         }
 
+        /**
+         * Metodo para saber si hay un siguiente elemento
+         * @return true si hay un siguiente elemento, false en otro caso
+         */
         @Override
         public boolean hasNext() {
             return siguiente != null;
         }
 
+        /**
+         * Metodo para obtener el siguiente elemento
+         * @return siguiente elemento
+         */
         @Override
         public E next() {
             if (siguiente == null) {
@@ -317,6 +470,11 @@ public class ArbolBB<E> extends AbstractSet<E> {
             return elemento;
         }
 
+        /**
+         * Metodo para encontrar el sucesor de un nodo
+         * @param nodo nodo a buscar
+         * @return sucesor del nodo
+         */
         private Nodo findSuccessor(Nodo nodo) {
             if (nodo == null) {
                 return null;
