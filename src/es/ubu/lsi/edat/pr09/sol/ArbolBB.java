@@ -7,7 +7,14 @@ import java.util.Iterator;
 public class ArbolBB<E> extends AbstractSet<E> {
     private Nodo raiz;
     private Comparator<? super E> comparator;
+    public ArbolBB() {
+        this((Comparator<? super E>) null);
+    }
 
+    public ArbolBB(Comparator<? super E> comparator) {
+        this.raiz = null;
+        this.comparator = comparator;
+    }
 
     public ArbolBB( Collection<? extends E> collection,Comparator<? super E> comparator) {
         this.comparator = comparator;
